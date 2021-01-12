@@ -25,7 +25,7 @@ class Player {
 
     static int distOf0(int mapGame[][],int x,int y, String direc){
         if (mapGame[y][x] == 1)
-            return 0;
+            direc = "";
         switch(direc) {
             case "LEFT" :
                 return 1 + distOf0(mapGame,x - 1,y,direc);
@@ -35,8 +35,56 @@ class Player {
                 return 1 + distOf0(mapGame,x,y - 1,direc);
             case "DOWN" :
                 return 1 + distOf0(mapGame,x,y + 1,direc);
+            default :
+                return 0;
         }
-        return 0;
+    }
+    static String chooseDir(int mapGame[][],int x,int y, String direc){
+        int nb0;
+        int nb1;
+        switch (direc){
+            case "RIGHT":
+            case "LEFT" :
+                nb0 = distOf0(mapGame,x,y-1,"UP");
+                nb1 = distOf0(mapGame,x,y+1,"DOWN");
+                System.err.println(nb0);
+                System.err.println(nb1);
+                if (nb0 == 0 && nb1 == 0){
+                    return direc;
+                }                     
+                else if (nb0 > nb1)
+                    return "UP";
+                else
+                    return "DOWN";
+            case "UP":
+            case "DOWN":
+                nb0 = distOf0(mapGame,x+1,y,"RIGHT");
+                nb1 = distOf0(mapGame,x-1,y,"LEFT");
+                System.err.println(nb0);
+                System.err.println(nb1);
+                if (nb0 == 0 && nb1 == 0){
+                    return direc;
+                }     
+                if ( nb0 > nb1 )
+                    return "RIGHT";
+                else
+                    return "LEFT";
+            default :
+                return "";
+        }
+    }
+    static String evalDir(int mapGame[][],int x,int y, String direc){
+        System.err.println(direc);
+        switch (direc){
+            case "RIGHT":
+            case "LEFT" :   
+                    return chooseDir(mapGame,x,y,direc);
+            case "UP":
+            case "DOWN":
+                    return chooseDir(mapGame,x,y,direc);
+            default :
+                return "";
+        }
     }
 
     public static void main(String args[]) {
@@ -54,8 +102,6 @@ class Player {
                 mapGame[i][j] = 0;
             }
         }
-        // printMap(mapGame);
-
         // System.err.println("Debug messages...")
         // game loop
         while (true) {
@@ -75,74 +121,38 @@ class Player {
                     printList(pose);
                 }            
             }
-            int nb1 = 0;
-            int nb2 = 0;
             printMap(mapGame);
             switch(direction){
                 case "LEFT" :
                     if (mapGame[pose[1]][pose[0] - 1] == 1){
-                        if (mapGame[pose[1] - 1][pose[0]] == 1){
-                            direction = "DOWN";
-                        }
-                        else if (mapGame[pose[1] + 1][pose[0]] == 1){
-                            direction = "UP";
-                        }
-                        else{
-                            nb1 = distOf0(mapGame,pose[0],pose[1]-1,"UP");
-                            nb2 = distOf0(mapGame,pose[0],pose[1]+1,"DOWN");                        
-                            if (nb1 > nb2)
-                                direction = "UP";
-                            else
-                                direction = "DOWN";
-                        }
+                        direction =evalDir(mapGame,pose[0],pose[1],direction);
+                    }
+                    else if (mapGame[pose[1] -1 ][pose[0] - 1] == 1 && mapGame[pose[1] + 1][pose[0] -1] == 1){
+                        direction =evalDir(mapGame,pose[0],pose[1],direction);
                     }
                     break;
                 case "RIGHT":
                     if (mapGame[pose[1]][pose[0] + 1] == 1){
-                        if (mapGame[pose[1] - 1][pose[0]] == 1)
-                            direction = "DOWN";
-                        else if (mapGame[pose[1] + 1][pose[0]] == 1)
-                            direction = "UP";
-                        else{
-                            nb1 = distOf0(mapGame,pose[0],pose[1]-1,"UP");
-                            nb2 = distOf0(mapGame,pose[0],pose[1]+1,"DOWN");
-                            if (nb1 > nb2)
-                                direction = "UP";
-                            else
-                                direction = "DOWN";
-                        }
+                        direction =evalDir(mapGame,pose[0],pose[1],direction);
+                    }
+                    else if (mapGame[pose[1] -1 ][pose[0] + 1] == 1 && mapGame[pose[1] + 1][pose[0] + 1] == 1){
+                        direction =evalDir(mapGame,pose[0],pose[1],direction);
                     }
                     break;
                 case "UP":
                     if (mapGame[pose[1] - 1][pose[0]] == 1){
-                        if (mapGame[pose[1]][pose[0] - 1] == 1)
-                            direction = "RIGHT";
-                        else if (mapGame[pose[1]][pose[0] + 1] == 1)
-                            direction = "LEFT";
-                        else{
-                            nb1 = distOf0(mapGame,pose[0]+1,pose[1],"RIGHT");
-                            nb2 = distOf0(mapGame,pose[0]-1,pose[1],"LEFT");
-                            if (nb1 > nb2)
-                                direction = "RIGHT";
-                            else
-                                direction = "LEFT";
-                        }
+                        direction =evalDir(mapGame,pose[0],pose[1],direction);
+                    }
+                    else if (mapGame[pose[1] -1 ][pose[0] - 1] == 1 && mapGame[pose[1] -1 ][pose[0] + 1] == 1){
+                        direction =evalDir(mapGame,pose[0],pose[1],direction);
                     }
                     break;
                 case "DOWN":
                     if (mapGame[pose[1] + 1][pose[0]] == 1){
-                        if (mapGame[pose[1]][pose[0] - 1] == 1)
-                            direction = "RIGHT";
-                        else if (mapGame[pose[1]][pose[0] + 1] == 1)
-                            direction = "LEFT";
-                        else{
-                            nb1 = distOf0(mapGame,pose[0]+1,pose[1],"RIGHT");
-                            nb2 = distOf0(mapGame,pose[0]-1,pose[1],"LEFT");
-                            if (nb1 > nb2)
-                                direction = "RIGHT";
-                            else
-                                direction = "LEFT";
-                        }
+                        direction =evalDir(mapGame,pose[0],pose[1],direction);
+                    }
+                     else if (mapGame[pose[1] + 1 ][pose[0] - 1] == 1 && mapGame[pose[1] + 1 ][pose[0] + 1] == 1){
+                        direction =evalDir(mapGame,pose[0],pose[1],direction);
                     }
                     break;
                 // Write an action using System.out.println()

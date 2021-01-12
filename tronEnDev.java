@@ -39,47 +39,49 @@ class Player {
                 return 0;
         }
     }
-    static String chooseDir(int mapGame[][],int x,int y, String direc){
-        switch (direc){
-            case "RIGHT":
-            case "LEFT" :                    
-                if (distOf0(mapGame,x,y-1,"UP") > distOf0(mapGame,x,y+1,"DOWN"))
-                    return "UP";
-                else
-                    return "DOWN";
-            case "UP":
-            case "DOWN":
-                if (distOf0(mapGame,x+1,y,"RIGHT") > distOf0(mapGame,x-1,y,"LEFT"))
-                    return "RIGHT";
-                else
-                    return "LEFT";
-            default :
-                return "";
+    static int[] plusGrand(int nb[]){
+        int[] result = new int[2];
+        result[0] = 0;
+        for(int i=0;i< 4;i++){
+            if (result[0] < nb[i]){
+                result[0] = nb[i];
+                result[1] = i;
+            }
         }
+        return result;
     }
+    static String chooseDir(int mapGame[][],int x,int y, String direc){
+        int[] nb = new int[4]; //0 : UP,1: DOWN, 2 : RIGHT, 3 : LEFT
+        int[] result = new int[2];
+        nb[0] = distOf0(mapGame,x,y-1,"UP");
+        nb[1] = distOf0(mapGame,x,y+1,"DOWN");
+        nb[2] = distOf0(mapGame,x+1,y,"RIGHT");
+        nb[3] = distOf0(mapGame,x-1,y,"LEFT");        
+        result = plusGrand(nb);
+        switch(result[1]){
+            case 0 :
+                return "UP";
+            case 1 :
+                return "DOWN";
+            case 2 :
+                return "RIGHT";
+            case 3 :
+                return "LEFT";
+            default :
+                return direc;
+        }
+
+        }
+
     static String evalDir(int mapGame[][],int x,int y, String direc){
         System.err.println(direc);
         switch (direc){
             case "RIGHT":
             case "LEFT" :   
-                if (mapGame[y - 1][x] == 1){
-                    return "DOWN";
-                }
-                else if (mapGame[y + 1][x] == 1){
-                    return "UP";
-                }
-                else{
                     return chooseDir(mapGame,x,y,direc);
-                }
             case "UP":
             case "DOWN":
-                if (mapGame[y][x - 1] == 1)
-                    return "RIGHT";
-                else if (mapGame[y][x + 1] == 1)
-                    return "LEFT";
-                else{
                     return chooseDir(mapGame,x,y,direc);
-                }
             default :
                 return "";
         }
@@ -116,34 +118,11 @@ class Player {
                 if (i == P){
                     pose[0] = X1 + 1;
                     pose[1] = Y1 + 1;
-                    printList(pose);
+                    // printList(pose);
                 }            
             }
-            printMap(mapGame);
-            switch(direction){
-                case "LEFT" :
-                    if (mapGame[pose[1]][pose[0] - 1] == 1){
-                        direction =evalDir(mapGame,pose[0],pose[1],direction);
-                    }
-                    break;
-                case "RIGHT":
-                    if (mapGame[pose[1]][pose[0] + 1] == 1){
-                        direction =evalDir(mapGame,pose[0],pose[1],direction);
-                    }
-                    break;
-                case "UP":
-                    if (mapGame[pose[1] - 1][pose[0]] == 1){
-                        direction =evalDir(mapGame,pose[0],pose[1],direction);
-                    }
-                    break;
-                case "DOWN":
-                    if (mapGame[pose[1] + 1][pose[0]] == 1){
-                        direction =evalDir(mapGame,pose[0],pose[1],direction);
-                    }
-                    break;
-                // Write an action using System.out.println()
-                // To debug: System.err.println("Debug messages...");                
-            }
+            // printMap(mapGame);
+            direction = chooseDir(mapGame,pose[0],pose[1],direction);
             System.out.println(direction); // A single line with UP, DOWN, LEFT or RIGHT
         }
     }
